@@ -1,0 +1,37 @@
+
+set.seed(10111) #to make sure that we get the same results for randomization
+
+#a matrix x is created using the matrix() function. The rnorm() function generates 40 random numbers from a normal distribution with mean 0 and standard deviation 1. These numbers are arranged into a matrix with 20 rows and 2 columns.
+x = matrix(rnorm(40), 20, 2)
+
+#A vector y is created using the rep() function. It contains 20 elements, with the first 10 being -1 and the second 10 being 1
+
+y = rep(c(-1, 1), c(10, 10))
+
+#The code then modifies the values of x for the rows where y is equal to 1. The rows are selected using the logical expression y == 1, and the values in those rows are increased by 1 using the + operator.
+
+x[y == 1,] = x[y == 1,] + 1
+
+#the plot() function is used to create a scatter plot of the data. The col argument sets the color of the points based on the values in y, with -1 being blue and 1 being red. The pch argument sets the shape of the points to a filled circle.
+
+plot(x, col = y + 3, pch = 19)
+
+#e1071 package provides functions for statistical learning and data mining.
+
+library(e1071)
+
+#creates a data frame called "dat" with two columns: "x" and "y". The "x" column is assumed to already exist in the workspace, while the "y" column is created by converting an existing variable "y" into a factor using the "as.factor()" function.
+
+dat = data.frame(x, y = as.factor(y))
+
+#The formula "y ~ ." specifies that the response variable is "y" and all other columns in the data frame should be used as predictors. The "kernel" argument specifies that a linear kernel should be used, while the "cost" argument sets the cost parameter to 10. The "scale" argument is set to FALSE, which means that the data will not be scaled before fitting the model.
+
+svmfit = svm(y ~ ., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+
+#prints the SVM model object to the console
+
+print(svmfit)
+
+#The plot will show the decision boundary of the SVM model and the support vectors. The svmfit object is the result of fitting an SVM model to the data dat. The dat object contains the data used to fit the SVM model.
+
+plot(svmfit, dat)

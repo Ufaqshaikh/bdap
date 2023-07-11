@@ -1,0 +1,15 @@
+install.packages("rpart") #install packages for modeling decision trees
+install.packages("rpart.plot") #install packages for plotting decision trees
+#load libraries
+library(rpart)
+library(rpart.plot)
+#header and sep for proper alignment and indentation
+play_decision<-read.table("E:\\BDAPractical\\DTdata.csv",header=TRUE,sep=",")
+play_decision
+summary(play_decision)
+#Play-OutputVariable, Outlook+Temperature+Humidity+Wind-InputVariable
+#rpart(formula, classification tree, dataset, controls the tree growth, purity measure-with split either information or gini
+fit<- rpart (Play~Outlook+Temperature+Humidity+Wind,method="class",data=play_decision,control=rpart.control(minsplit=1),parms=list(split='information'))
+summary(fit)
+rpart.plot(fit,type=4,extra=106)
+

@@ -1,0 +1,51 @@
+install.packages("e1071") #The e1071 package contains the naiveBayes function. It allows numeric and factor variables to be used in the naive bayes model.
+library(e1071) #load the library
+sample<-read.table("E:\\BDAPractical\\sample1.csv",header=TRUE,sep=",") #read the data into a table from the file
+
+# define the data frames for the Naive Bayes classifier
+traindata<-as.data.frame(sample[1:14,])
+testdata<-as.data.frame(sample[15,])
+traindata
+testdata
+
+#Compute the prior probabilities P(c) for Enrolls, where C = {Yes,No}. 
+tprior<-table(traindata$Enrolls)
+tprior
+tprior<-tprior/sum(tprior)
+tprior
+
+#compute conditional probabilities P(A|C), where A ={Age, Income, JobSatisfaction,Desire} and C ={Yes, No}.
+ageCounts<-table(traindata[,c("Enrolls","Age")])
+ageCounts<-ageCounts/rowSums(ageCounts)
+ageCounts
+
+incomeCounts<-table(traindata[,c("Enrolls","Income")])
+incomeCounts<-incomeCounts/rowSums(incomeCounts)
+incomeCounts
+
+jsCounts<-table(traindata[,c("Enrolls","JobSatisfaction")])
+jsCounts<-jsCounts/rowSums(jsCounts)
+jsCounts
+
+desireCounts<-table(traindata[,c("Enrolls","Desire")])
+desireCounts<-desireCounts/rowSums(desireCounts)
+desireCounts
+
+#probability P(c|A) is determined by the product of P(a|c,) times the (c1) where c1 =Yes and c2 =No. 
+prob_Yes<-ageCounts["Yes",testdata[,c("Age")]]*incomeCounts["Yes",testdata[,c("Income")]]*jsCounts["Yes",testdata[,c("JobSatisfaction")]]*desireCounts["Yes",testdata[,c("Desire")]]*tprior["Yes"]
+prob_Yes
+
+prob_No<-ageCounts["No",testdata[,c("Age")]]*incomeCounts["No",testdata[,c("Income")]]*jsCounts["No",testdata[,c("JobSatisfaction")]]*desireCounts["No",testdata[,c("Desire")]]*tprior["No"]
+prob_No
+
+#The larger value of P(YesiA) and P(NoiA) determines the predicted result of the output variable. 
+max(prob_Yes,prob_No)
+
+#Naive Bayes function computes the conditional probabilities. The function takes the form of naive Bayes (formula, data,••• ), where the arguments are defined as follows.
+# formula: A formula ofthe form class ~ xl + x2 + ... assuming xl, x2 ... are conditionally independent & data: A data frame of factors
+model<-naiveBayes(Enrolls~Age+Income+JobSatisfaction+Desire,traindata)
+model
+
+#predicting the outcome of Enrolls with the test data shows the result is Enrolls= Yes
+results<-predict(model,testdata)
+results
